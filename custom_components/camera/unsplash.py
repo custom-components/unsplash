@@ -1,5 +1,5 @@
 """
-A camera platform that give you random images from Unsplash presented as a camera feed.
+A camers platform that give you random images from Unsplash presended as a camera feed.
 
 For more details about this component, please refer to the documentation at
 https://github.com/custom-components/camera.unsplash
@@ -13,7 +13,7 @@ import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
 from homeassistant.components.camera import (PLATFORM_SCHEMA, Camera)
 
-__version__ = '0.0.1'
+__version__ = '0.0.2'
 _LOGGER = logging.getLogger(__name__)
 
 CONF_FILE_PATH = 'file_path'
@@ -68,9 +68,11 @@ class UnsplashCamera(Camera):
 
     def get_new_img(self):
         """Download new image if needed"""
-        lastchanged = os.stat(self._file_path).st_mtime
+        lastchanged = 0
+        if os.path.isfile(self._file_path):
+            lastchanged = os.stat(self._file_path).st_mtime
         diff = str(time.time() - lastchanged).split('.')[0]
-        if int(diff) > int(DEFAULT_INTERVAL):
+        if int(diff) > int(DEFAULT_INTERVAL) or not os.path.isfile(self._file_path):
             _LOGGER.debug('downloading new img')
             base = 'https://api.unsplash.com/photos/random/'
             if self._collection_id != 'None':
