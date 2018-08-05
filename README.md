@@ -25,5 +25,5 @@ key | description
 **output_dir (Required)** | This camera platform saves the image to a location on your host, this should be /www/  
 **collection_id (Optional)** | Limit the picture to a collection.
 
-**Sample overview:**
+**Sample overview:**\
 ![sample](sample.png)
