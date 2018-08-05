@@ -21,9 +21,11 @@ camera:
 key | description  
 :--- | :---  
 **platform (Required)** | The camera platform name.  
-**api_key (Required)** | Your Unsplash API key.
+**api_key (Required)** | Your Unsplash access key.
 **output_dir (Required)** | This camera platform saves the image to a location on your host, this should be /www/  
 **collection_id (Optional)** | Limit the picture to a collection.
+
+**NB!** It is the `Access Key` and **not** the `Secret key` you need to use.
 
 **Sample overview:**\
 ![sample](sample.png)
