@@ -24,7 +24,7 @@ key | description
 **api_key (Required)** | Your Unsplash access key.
 **output_dir (Required)** | This camera platform saves the image to a location on your host, this should be /www/  
 **collection_id (Optional)** | Limit the picture to a collection.
-**interval (Optional)** | The interval in minuttes to fetch new imgages, defaults to `10`, due to API limits this should never be less then `2`.
+**interval (Optional)** | The interval in minutes to fetch new imgages, defaults to `10`, due to API limits this should never be less then `2`.
 
 **NB!** It is the `Access Key` and **not** the `Secret key` you need to use.
 
