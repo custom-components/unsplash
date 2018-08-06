@@ -13,7 +13,7 @@ import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
 from homeassistant.components.camera import (PLATFORM_SCHEMA, Camera)
 
-__version__ = '0.1.0'
+__version__ = '0.2.1'
 _LOGGER = logging.getLogger(__name__)
 
 CONF_FILE_PATH = 'file_path'
@@ -52,17 +52,16 @@ class UnsplashCamera(Camera):
         self._name = name
         self._file_path = file_path
         self._api_key = api_key
-        self._author = None
         self._interval = int(interval) * 60
         self._collection_id = collection_id
-        self.get_new_img()
+        self.get_new_img('init')
         content, _ = mimetypes.guess_type(file_path)
         if content is not None:
             self.content_type = content
 
     def camera_image(self):
         """Return image response."""
-        self.get_new_img()
+        self.get_new_img('auto')
         try:
             with open(self._file_path, 'rb') as file:
                 return file.read()
@@ -70,27 +69,31 @@ class UnsplashCamera(Camera):
             _LOGGER.warning("Could not read camera %s image from file: %s",
                             self._name, self._file_path)
 
-    def get_new_img(self):
+    def get_new_img(self, trigger):
         """Download new image if needed"""
         lastchanged = 0
         if os.path.isfile(self._file_path):
             lastchanged = os.stat(self._file_path).st_mtime
         diff = str(time.time() - lastchanged).split('.')[0]
-        if int(diff) > int(self._interval) or not os.path.isfile(self._file_path):
+        if int(diff) > int(self._interval) or not os.path.isfile(self._file_path) or trigger == 'init':
             _LOGGER.debug('downloading new img')
             base = 'https://api.unsplash.com/photos/random/'
             if self._collection_id != 'None':
                 url = base + '?client_id=' + self._api_key + '&collections=' + self._collection_id
             else:
                 url = base + '?client_id=' + self._api_key
-            data = requests.get(url, timeout=5).json()
-            downloadurl = data['urls']['regular']
-            self._author = data['user']['name'] + ' @' + data['user']['username'] + ' (Unsplash)'
-            file_source = requests.get(downloadurl)
-            if file_source.status_code == 200:
-                with open(self._file_path, 'wb+') as camera:
-                    camera.write(file_source.content)
-                camera.close()
+            try:
+                data = requests.get(url, timeout=5).json()
+                downloadurl = data['urls']['regular']
+                self._author_name = data['user']['name']
+                self._author_user = '@' + data['user']['username']
+                file_source = requests.get(downloadurl)
+                if file_source.status_code == 200:
+                    with open(self._file_path, 'wb+') as camera:
+                        camera.write(file_source.content)
+                    camera.close()
+            except:
+                _LOGGER.debug('Failed to update attribs or img.')
 
     @property
     def name(self):
@@ -101,5 +104,7 @@ class UnsplashCamera(Camera):
     def device_state_attributes(self):
         """Return the camera state attributes."""
         return {
-            'author': self._author,
+            'source': 'Unsplash',
+            'author_name': self._author_name,
+            'author_user': self._author_user,
         }
