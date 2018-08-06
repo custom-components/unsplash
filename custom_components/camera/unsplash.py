@@ -13,22 +13,24 @@ import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
 from homeassistant.components.camera import (PLATFORM_SCHEMA, Camera)
 
-__version__ = '0.0.2'
+__version__ = '0.1.0'
 _LOGGER = logging.getLogger(__name__)
 
 CONF_FILE_PATH = 'file_path'
 CONF_API_KEY = 'api_key'
 CONF_OUTPUT_DIR = 'output_dir'
 CONF_COLLECTION_ID = 'collection_id'
+CONF_INTERVAL = 'interval'
 
 DEFAULT_NAME = 'Unsplash'
 
-DEFAULT_INTERVAL = 600
+DEFAULT_INTERVAL = 10
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_API_KEY): cv.string,
     vol.Required(CONF_OUTPUT_DIR): cv.string,
     vol.Optional(CONF_COLLECTION_ID, default='None'): cv.string,
+    vol.Optional(CONF_INTERVAL, default=DEFAULT_INTERVAL): cv.string,
 })
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
@@ -36,20 +38,22 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     file_path = hass.config.path() + config.get(CONF_OUTPUT_DIR) + 'unsplash.jpg'
     api_key = config.get(CONF_API_KEY)
     collection_id = config.get(CONF_COLLECTION_ID)
-    camera = UnsplashCamera(DEFAULT_NAME, file_path, api_key, collection_id)
+    interval = config.get(CONF_INTERVAL)
+    camera = UnsplashCamera(DEFAULT_NAME, file_path, api_key, collection_id, interval)
     add_devices([camera])
 
 
 class UnsplashCamera(Camera):
     """Representation of a local file camera."""
 
-    def __init__(self, name, file_path, api_key, collection_id):
+    def __init__(self, name, file_path, api_key, collection_id, interval):
         """Initialize Unsplash Camera component."""
         super().__init__()
         self._name = name
         self._file_path = file_path
         self._api_key = api_key
         self._author = None
+        self._interval = int(interval) * 60
         self._collection_id = collection_id
         self.get_new_img()
         content, _ = mimetypes.guess_type(file_path)
@@ -72,7 +76,7 @@ class UnsplashCamera(Camera):
         if os.path.isfile(self._file_path):
             lastchanged = os.stat(self._file_path).st_mtime
         diff = str(time.time() - lastchanged).split('.')[0]
-        if int(diff) > int(DEFAULT_INTERVAL) or not os.path.isfile(self._file_path):
+        if int(diff) > int(self._interval) or not os.path.isfile(self._file_path):
             _LOGGER.debug('downloading new img')
             base = 'https://api.unsplash.com/photos/random/'
             if self._collection_id != 'None':
