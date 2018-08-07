@@ -30,7 +30,7 @@ DEFAULT_INTERVAL = 10
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_API_KEY): cv.string,
     vol.Required(CONF_OUTPUT_DIR): cv.string,
-    vol.Required(CONF_OUTPUT_DIR, default=DEFAULT_NAME): cv.string,
+    vol.Required(CONF_NAME, default=DEFAULT_NAME): cv.string,
     vol.Optional(CONF_COLLECTION_ID, default='None'): cv.string,
     vol.Optional(CONF_INTERVAL, default=DEFAULT_INTERVAL): cv.string,
 })
