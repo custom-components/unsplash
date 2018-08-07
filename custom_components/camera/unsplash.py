@@ -13,7 +13,7 @@ import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
 from homeassistant.components.camera import (PLATFORM_SCHEMA, Camera)
 
-__version__ = '0.2.1'
+__version__ = '0.3.0'
 _LOGGER = logging.getLogger(__name__)
 
 CONF_FILE_PATH = 'file_path'
@@ -21,6 +21,7 @@ CONF_API_KEY = 'api_key'
 CONF_OUTPUT_DIR = 'output_dir'
 CONF_COLLECTION_ID = 'collection_id'
 CONF_INTERVAL = 'interval'
+CONF_NAME = 'name'
 
 DEFAULT_NAME = 'Unsplash'
 
@@ -29,6 +30,7 @@ DEFAULT_INTERVAL = 10
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_API_KEY): cv.string,
     vol.Required(CONF_OUTPUT_DIR): cv.string,
+    vol.Required(CONF_OUTPUT_DIR, default=DEFAULT_NAME): cv.string,
     vol.Optional(CONF_COLLECTION_ID, default='None'): cv.string,
     vol.Optional(CONF_INTERVAL, default=DEFAULT_INTERVAL): cv.string,
 })
@@ -37,9 +39,10 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     """Set up the Camera that works with local files."""
     file_path = hass.config.path() + config.get(CONF_OUTPUT_DIR) + 'unsplash.jpg'
     api_key = config.get(CONF_API_KEY)
+    name = config.get(CONF_NAME)
     collection_id = config.get(CONF_COLLECTION_ID)
     interval = config.get(CONF_INTERVAL)
-    camera = UnsplashCamera(DEFAULT_NAME, file_path, api_key, collection_id, interval)
+    camera = UnsplashCamera(name, file_path, api_key, collection_id, interval)
     add_devices([camera])
 
 
