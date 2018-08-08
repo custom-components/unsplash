@@ -11,7 +11,7 @@ import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
 from homeassistant.components.camera import (PLATFORM_SCHEMA, Camera)
 
-__version__ = '0.4.1'
+__version__ = '0.4.2'
 _LOGGER = logging.getLogger(__name__)
 
 CONF_FILE_PATH = 'file_path'
@@ -51,8 +51,7 @@ class UnsplashCamera(Camera):
         super().__init__()
         self.hass = hass
         self._name = name
-        self.hass.data[UNSPLASH_DATA] = {}
-        self.hass.data[UNSPLASH_DATA][self._name] = {}
+        self._image = None
         self._api_key = api_key
         self.is_streaming = False
         self._lastchanged = 0
@@ -84,10 +83,10 @@ class UnsplashCamera(Camera):
                 self._lastchanged = time.time()
                 file_source = requests.get(downloadurl)
                 if file_source.status_code == 200:
-                    self.hass.data[UNSPLASH_DATA][self._name]['image'] = file_source.content
+                    self._image = file_source.content
             except:
                 _LOGGER.debug('Failed to update img.')
-        return self.hass.data[UNSPLASH_DATA][self._name]['image']
+        return self._image
 
     @property
     def name(self):
