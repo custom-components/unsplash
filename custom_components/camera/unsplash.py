@@ -12,6 +12,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.components.camera import (PLATFORM_SCHEMA, Camera)
 
 __version__ = '0.4.2'
+
 _LOGGER = logging.getLogger(__name__)
 
 CONF_FILE_PATH = 'file_path'
