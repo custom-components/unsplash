@@ -29,3 +29,7 @@ key | description
 
 **Sample overview:**\
 ![sample](sample.png)
+
+***
+
+[buymeacoffee.com](https://www.buymeacoffee.com/ludeeus)
