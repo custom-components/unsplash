@@ -28,7 +28,7 @@ key | description
 **NB!** It is the `Access Key` and **not** the `Secret key` you need to use.
 
 **Sample overview:**\
-![sample](sample.png)
+![example](example.png)
 
 ***
 
