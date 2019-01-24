@@ -4,8 +4,8 @@ A camera platform that give you random images from Unsplash presented as a camer
 
 To get an API key you need to register an account [here.](https://unsplash.com/developers)
   
-To get started put `/custom_components/camera/unsplash.py` here:  
-`<config directory>/custom_components/camera/unsplash.py`  
+To get started put `/custom_components/unsplash/camera.py` here:  
+`<config directory>/custom_components/unsplash/camera.py`  
   
 **Example configuration.yaml:**
 
