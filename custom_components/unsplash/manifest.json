@@ -1,8 +1,10 @@
 {
-  "domain": "unsplashed",
-  "name": "Unsplashed",
-  "documentation": "https://github.com/custom-components/camera.unsplashed",
+  "domain": "unsplash",
+  "name": "Unsplash",
+  "documentation": "https://github.com/custom-components/unsplash",
   "dependencies": [],
-  "codeowners": ["@ludeeus"],
+  "codeowners": [
+    "@ludeeus"
+  ],
   "requirements": []
 }

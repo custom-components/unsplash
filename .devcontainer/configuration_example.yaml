@@ -1,0 +1,11 @@
+default_config:
+logger:
+  default: error
+  logs:
+    custom_components.unsplash: debug
+
+
+
+camera:
+  platform: unsplash
+  api_key: HFSD7843HHFUKLHSDF84HFLWF8S4HF8OFSLJ8W34FBLWS
