@@ -18,6 +18,9 @@ CONF_API_KEY = "api_key"
 CONF_COLLECTION_ID = "collection_id"
 CONF_INTERVAL = "interval"
 CONF_NAME = "name"
+CONF_ORIENTATION = "orientation"
+CONF_CONTENT_FILTER = "content_filter"
+CONF_SEARCH_QUERY = "query"
 
 UNSPLASH_DATA = "unsplash_data"
 
@@ -25,12 +28,17 @@ DEFAULT_NAME = "Unsplash"
 
 DEFAULT_INTERVAL = 10
 
+DEFAULT_CONTENT_FILTER = "low"
+
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
         vol.Required(CONF_API_KEY): cv.string,
         vol.Required(CONF_NAME, default=DEFAULT_NAME): cv.string,
         vol.Optional(CONF_COLLECTION_ID, default="None"): cv.string,
         vol.Optional(CONF_INTERVAL, default=DEFAULT_INTERVAL): cv.string,
+        vol.Optional(CONF_ORIENTATION, default="Any"): cv.string,
+        vol.Optional(CONF_CONTENT_FILTER, default=DEFAULT_CONTENT_FILTER): cv.string,
+        vol.Optional(CONF_SEARCH_QUERY, default="None"): cv.string,
     }
 )
 
@@ -41,14 +49,17 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     name = config.get(CONF_NAME)
     collection_id = config.get(CONF_COLLECTION_ID)
     interval = config.get(CONF_INTERVAL)
-    camera = UnsplashCamera(hass, name, api_key, collection_id, interval)
+    orientation = config.get(CONF_ORIENTATION)
+    content_filter = config.get(CONF_CONTENT_FILTER)
+    search_query = config.get(CONF_SEARCH_QUERY)
+    camera = UnsplashCamera(hass, name, api_key, collection_id, interval, orientation, content_filter, search_query)
     add_devices([camera])
 
 
 class UnsplashCamera(Camera):
     """Representation of the camera."""
 
-    def __init__(self, hass, name, api_key, collection_id, interval):
+    def __init__(self, hass, name, api_key, collection_id, interval, orientation, content_filter, search_query):
         """Initialize Unsplash Camera component."""
         super().__init__()
         self.hass = hass
@@ -59,6 +70,9 @@ class UnsplashCamera(Camera):
         self._lastchanged = 0
         self._interval = int(interval) * 60
         self._collection_id = collection_id
+        self._orientation = orientation
+        self._content_filter = content_filter
+        self._search_query = search_query
         self.get_new_img("init")
 
     def camera_image(self):
@@ -73,16 +87,15 @@ class UnsplashCamera(Camera):
         if float(diff) > float(self._interval) or trigger == "init":
             _LOGGER.debug("downloading new img")
             base = "https://api.unsplash.com/photos/random/"
+            url = base + "?client_id=" + self._api_key
             if self._collection_id != "None":
-                url = (
-                    base
-                    + "?client_id="
-                    + self._api_key
-                    + "&collections="
-                    + self._collection_id
-                )
-            else:
-                url = base + "?client_id=" + self._api_key
+                url = url + "&collections=" + self._collection_id
+            if self._orientation != "Any":
+                url = url + "&orientation=" + self._orientation
+            if self._content_filter != "low":
+                url = url + "&content_filter=" + self._content_filter
+            if self._search_query != "None":
+                url = url + "&query=" + self._search_query
             try:
                 data = requests.get(url, timeout=5).json()
                 downloadurl = data["urls"]["regular"]
