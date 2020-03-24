@@ -24,6 +24,9 @@ key | description
 **collection_id (Optional)** | Limit the picture to a collection.
 **name (Optional)** | Set the a custom name for the platform entity.
 **interval (Optional)** | The interval in minutes to fetch new imgages, defaults to `10`, due to API limits this should never be less then `2`.
+**query (Optional)** | Limit selection to photos matching a search term.
+**orientation (Optional)** | Filter search results by photo orientation. Valid values are `landscape`, `portrait`, and `squarish`.
+**content_filter (Optional)** | Limit results by [content safety](https://unsplash.com/documentation#content-safety). Valid values are `low` (default) and `high`.
 
 **NB!** It is the `Access Key` and **not** the `Secret key` you need to use.
 
