@@ -1,1 +1,2 @@
 .devcontainer/configuration.yaml
+*.pyc

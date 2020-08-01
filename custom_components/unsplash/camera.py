@@ -52,14 +52,33 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     orientation = config.get(CONF_ORIENTATION)
     content_filter = config.get(CONF_CONTENT_FILTER)
     search_query = config.get(CONF_SEARCH_QUERY)
-    camera = UnsplashCamera(hass, name, api_key, collection_id, interval, orientation, content_filter, search_query)
+    camera = UnsplashCamera(
+        hass,
+        name,
+        api_key,
+        collection_id,
+        interval,
+        orientation,
+        content_filter,
+        search_query,
+    )
     add_devices([camera])
 
 
 class UnsplashCamera(Camera):
     """Representation of the camera."""
 
-    def __init__(self, hass, name, api_key, collection_id, interval, orientation, content_filter, search_query):
+    def __init__(
+        self,
+        hass,
+        name,
+        api_key,
+        collection_id,
+        interval,
+        orientation,
+        content_filter,
+        search_query,
+    ):
         """Initialize Unsplash Camera component."""
         super().__init__()
         self.hass = hass
@@ -74,6 +93,8 @@ class UnsplashCamera(Camera):
         self._content_filter = content_filter
         self._search_query = search_query
         self.get_new_img("init")
+        self._author_name = ""
+        self._author_user = ""
 
     def camera_image(self):
         """Return image response."""
@@ -86,6 +107,8 @@ class UnsplashCamera(Camera):
         diff = str(time.time() - self._lastchanged)
         if float(diff) > float(self._interval) or trigger == "init":
             _LOGGER.debug("downloading new img")
+            self._author_name = ""
+            self._author_user = ""
             base = "https://api.unsplash.com/photos/random/"
             url = base + "?client_id=" + self._api_key
             if self._collection_id != "None":
