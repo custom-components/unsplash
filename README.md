@@ -1,3 +1,11 @@
+# DEPRECATED
+
+Use `http://unsplash.it/1080/720` as image_url instead.
+
+<details>
+<summary>Old readme contents</summary>
+
+
 # camera.unsplash
 
 A camera platform that give you random images from Unsplash presented as a camera feed.
@@ -36,3 +44,7 @@ key | description
 ***
 
 [buymeacoffee.com](https://www.buymeacoffee.com/ludeeus)
+
+
+</details>
+
